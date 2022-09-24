@@ -153,3 +153,5 @@ cython_debug/
 credentials.json
 args.txt
 
+templates/RPT-01.docx
+templates/TMP-01.dotx
