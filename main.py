@@ -40,12 +40,10 @@ def main():
     f = open(file, "r")
 
     credentials_path = f.readline()
-    credentials_path = credentials_path.replace("\n","")
+    credentials_path = credentials_path.replace("\n", "")
     templates_dir = f.readline()
     templates_dir = templates_dir.replace("\n", "")
-    options = [line for line in f.readlines() if line.strip()]
-    for option in options:
-        option = option.replace("\n", "")
+    options = [line.replace("\n", "") for line in f.readlines() if line.strip()]
 
     # authorization with GCP
     gc = pygsheets.authorize(service_file=credentials_path)
@@ -96,10 +94,10 @@ def main():
 def prompt_user_entry(options):
     # Prompt user to enter an integer corresponding to one of the actions written in the args file
     slct = -1
-    print(Color("{red}Please select from the list below\n\n{/red}"))
+    print(Color("{red}Please select from the list below\n{/red}"))
     for option in options:
         print(f"{options.index(option)+1}. {option}")
-    slct_option = input("\n\nYour selection: ")
+    slct_option = input(Color("\n{green}Your Selection{/green}")+":\n")
     try:
         slct = int(slct_option)
     except:
@@ -112,7 +110,7 @@ def prompt_user_entry(options):
 
 def create_document_from_template():
     # Copy template and copy data from spreadsheet referencing project if project report/quotation/proposal
-
+    print("CREATE NEW DOCUMENT FROM TEMPLATE SELECTED. ACTION NOT IMPLEMENTED YET")
     pass
 
 
