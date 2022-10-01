@@ -33,6 +33,9 @@ proj_codes_id_counters = {}
 template_title_code = {}
 template_title_type = {}
 
+# List of used custom document properties
+custom_props = []
+
 
 def main():
     # Reading from args txt file
@@ -92,7 +95,12 @@ def main():
 
 
 def prompt_user_entry(options):
-    # Prompt user to enter an integer corresponding to one of the actions written in the args file
+    """
+     Prompt user to enter an integer corresponding to one of the actions written in the args file
+    :param options: list
+    contains all possible options to be presented to the user
+    :return:
+    """
     slct = -1
     print(Color("{red}Please select from the list below\n{/red}"))
     for option in options:
@@ -109,26 +117,78 @@ def prompt_user_entry(options):
 
 
 def create_document_from_template():
-    # Copy template and copy data from spreadsheet referencing project if project report/quotation/proposal
+    """ Copy template and copy data from spreadsheet referencing project if project report/quotation/proposal
+
+    Prompts user to edit
+    :return:
+    """
+
     print("CREATE NEW DOCUMENT FROM TEMPLATE SELECTED. ACTION NOT IMPLEMENTED YET")
-    pass
+    options = list(template_title_code.values())
+    slct = prompt_user_entry(options)
+    try:
+        doc = aw.Document(list(template_title_code.keys())[slct])
+        doc_name = input(Color("{green}Name of the document:{/green}:\n"))
+        while doc_name[0].isdigit():
+            print(Color("{red}File names can't start with a digit! try agan{/red}"))
+            doc_name = input(Color("{green}Name of the document:{/green}:\n"))
+        doc_name = doc_name + "(" + list(template_title_code.keys())[slct] + ")"
+        print(Color("{green}Please enter the following document details:{/green}:\n"))
+        my_props = doc.custom_document_properties
+        for prop in my_props:
+            if prop in custom_props:
+                edited_field_val = input(f"{prop.name} ({prop.type}):\n")
+                prop.value = edited_field_val
+        doc.save(doc_name)
+    except:
+        print("The template selected is unavailable. Retry or contact the IT team if the issue persists")
 
 
 def edit_existing_document():
-    # Locate a file and edit its properties
+    """ Locate a file and edit its properties
 
-    pass
+    :return:
+    """
+    doc_path = input(Color("{green}Document Path{/green}:\n"))
+    try:
+        doc = aw.Document(doc_path)
+        my_props = doc.custom_document_properties
+        for prop in my_props:
+            if prop in custom_props:
+                print(f"{custom_props.index(prop.name)+1} : {prop.name} ({prop.type}):\n")
+        match input(Color("{green}Do you wish to edit any of these properties?(Y/N){/green}:\n")):
+            case ["y" | "Y"]:
+                try:
+                    slct = int(input(Color("{green}Enter index of the property you want to edit{/green}:\n")))
+                    if not custom_props[slct]:
+                        print("You need to enter an integer from the list of properties! Try again")
+                        edit_existing_document()
+                    my_props.add(custom_props[slct], input(custom_props[slct]))
+                except:
+                    print("You need to enter an integer from the list of properties! Try again")
+                    edit_existing_document()
+
+    except:
+        print("File not found. Please try again!")
+        edit_existing_document()
 
 
 def create_new_template():
-    # Copy Template of templates, create new document using it, using type and give it a new id, then add it to the
-    # templates worksheet
+    """Copy Template of templates, create new document using it, using type and give it a new id, then add it to the
+    templates worksheet
+
+    :return:
+    """
 
     pass
 
 
 def parse_data_templates(sheet2_matrix):
-    # Parse Template data and populate global doc template data containers
+    """ Parse Template data and populate global doc template data containers
+
+    :param sheet2_matrix: list[list]
+    :return:
+    """
     for line in sheet2_matrix:
         if sheet2_matrix.index(line) == 0:
             print(f"LOG: Line {sheet2_matrix.index(line)} Skipped")
@@ -144,7 +204,11 @@ def parse_data_templates(sheet2_matrix):
 
 
 def parse_data_projects(sheet1_matrix):
-    # Parse Project data and populate global project data containers
+    """
+    Parse Project data and populate global project data containers
+    :param sheet1_matrix: list[list]
+    :return:
+    """
     for line in sheet1_matrix:
         if sheet1_matrix.index(line) == 0:
             print(f"LOG: Line {sheet1_matrix.index(line)} Skipped")
