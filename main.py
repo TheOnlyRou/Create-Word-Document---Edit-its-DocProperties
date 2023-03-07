@@ -122,12 +122,14 @@ def create_document_from_template():
     Prompts user to edit
     :return:
     """
-
+    # TODO complete the method functionality
     print("CREATE NEW DOCUMENT FROM TEMPLATE SELECTED. ACTION NOT IMPLEMENTED YET")
-    options = list(template_title_code.values())
+    options = list(template_title_code.keys())
     slct = prompt_user_entry(options)
     try:
-        doc = aw.Document(list(template_title_code.keys())[slct])
+        print(f"Template file: {list(template_title_code.values())[slct]}.docx")
+        doc_path = "templates\\"+list(template_title_code.values())[slct]+".docx"
+        doc = aw.Document(doc_path)
         doc_name = input(Color("{green}Name of the document:{/green}:\n"))
         while doc_name[0].isdigit():
             print(Color("{red}File names can't start with a digit! try agan{/red}"))
@@ -139,9 +141,13 @@ def create_document_from_template():
             if prop in custom_props:
                 edited_field_val = input(f"{prop.name} ({prop.type}):\n")
                 prop.value = edited_field_val
-        doc.save(doc_name)
+        try:
+            # TODO prompt user for where to save file
+            doc.save(doc_name+".docx")
+        except IOError:
+            print("Unable to save file. Retry or contact the IT team if the issue persists")
     except:
-        print("The template selected is unavailable. Retry or contact the IT team if the issue persists")
+        print("Error Occurred. Retry or contact the IT team if the issue persists")
 
 
 def edit_existing_document():
@@ -167,13 +173,13 @@ def edit_existing_document():
                 except:
                     print("You need to enter an integer from the list of properties! Try again")
                     edit_existing_document()
-
     except:
         print("File not found. Please try again!")
         edit_existing_document()
 
 
 def create_new_template():
+    # TODO
     """Copy Template of templates, create new document using it, using type and give it a new id, then add it to the
     templates worksheet
 
@@ -224,7 +230,6 @@ def parse_data_projects(sheet1_matrix):
             if line[15] != "":
                 print(f"LOG: PRJ_CODE_PRE {line[15]} appended to Project Prefixes")
                 proj_code_prefixes.append(line[15])
-
     for prefix in proj_code_prefixes:
         proj_codes_id_counters[prefix] = 0
 
